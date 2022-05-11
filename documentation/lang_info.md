@@ -5,3 +5,5 @@
 The Solar Programming Language (SPL) is a C-like, unsafe, statically and explicitly typed language.
 It was designed initially for the homebrew Mercury instruction set with plans to be compilable for other homebrew CPUs.
 SPL is simply an experiment with compilation and a tool made to test simple homebrew CPUs.
+
+This Git repository contains documentation on SPL as well as a compiler toolchain with a Mercury Assembly backend
