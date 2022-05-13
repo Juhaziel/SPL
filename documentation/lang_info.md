@@ -50,3 +50,19 @@ Block scoped variables are stored in the stack of its corresponding function.
 Alternatively, a block scoped variable may be declared in the data segment by prefixing it with `static`
 
 #### 2.1.3 Types ####
+SPL features these basic types:
+	
+	- char (represents an ASCII character)
+	- int8 (1 byte signed)
+	- uint8 (1 byte unsigned)
+	- int16 (2 bytes signed)
+	- uint16 (2 bytes unsigned)
+	- int32 (4 bytes signed)
+	- uint32 (4 bytes unsigned)
+	- int64 (8 bytes signed)
+	- uint64 (8 bytes unsigned)
+	- half (2 byte half-float IEEE 754)
+	- float (4 byte float IEEE 754)
+	- double (8 byte float IEEE 754)
+
+Prefixing a type by \[\] indicates an array while prefixing it with \* indicates a pointer.
