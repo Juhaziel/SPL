@@ -41,18 +41,19 @@ Prototype scoped variables are only checked against input when the input is a co
 
 In order for a file scoped variable to be visible to other files (program scoped), it must be prefixed by `global`.
 
-During a function's definition, its parameters are set to block scope. Otherwise, the parameters are prototype scoped
+During a procedure's definition, its parameters are set to block scope. Otherwise, the parameters are prototype scoped
 Otherwise, prototype-scoped variables only last until the end of the procedure's declaration.
 
 Program and file scoped variables are stored in the data segment and last the entire program's runtime.
 
-Block scoped variables are stored in the stack of its corresponding function.
+Block scoped variables are stored in the stack of its corresponding procedure.
 Alternatively, a block scoped variable may be declared in the data segment by prefixing it with `static`
 
 #### 2.1.3 Types ####
 SPL features these basic types:
 	
 	(INTEGERS)
+	- word (macro-defined WORD_TYPE_SIZE, should represent 1 word)
 	- int8 (1 byte signed)
 	- int16 (2 bytes signed)
 	- int32 (4 bytes signed)
@@ -63,6 +64,13 @@ SPL features these basic types:
 	- half (2 byte half-float IEEE 754)
 	- float (4 byte float IEEE 754)
 	- double (8 byte float IEEE 754)
+
+More complex types can be created such as:
+	- An *array* type representing a contiguous array of elements of the same type.
+	- A *pointer* type representing the address of another variable.
+	- A *structure* type representing a grouping of many values.
+	- A *union* type representing an overlap of multiple same-sized variables.
+	- A *procedure* type representing a block of instructions that can be called with varying parameters. 
 
 Prefixing a type by `[]` indicates an array while prefixing it with `&` indicates a pointer (i.e. a reference).
 
