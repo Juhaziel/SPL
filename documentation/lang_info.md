@@ -67,11 +67,11 @@ SPL features these basic types:
 
 More complex types can be created such as:
 
-	- An *array* type representing a contiguous array of elements of the same type.
-	- A *pointer* type representing the address of another variable.
-	- A *structure* type representing a grouping of many values.
-	- A *union* type representing an overlap of multiple same-sized variables.
-	- A *procedure* type representing a block of instructions that can be called with varying parameters. 
+	- An array type representing a contiguous array of elements of the same type.
+	- A pointer type representing the address of another variable.
+	- A structure type representing a grouping of many values.
+	- An union type representing an overlap of multiple same-sized variables.
+	- A procedure type representing a block of instructions that can be called with varying parameters. 
 
 Prefixing a type by `[]` indicates an array while prefixing it with `&` indicates a pointer (i.e. a reference).
 
