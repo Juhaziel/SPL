@@ -52,15 +52,14 @@ Alternatively, a block scoped variable may be declared in the data segment by pr
 #### 2.1.3 Types ####
 SPL features these basic types:
 	
-	- char (represents an ASCII character)
+	(INTEGERS)
 	- int8 (1 byte signed)
-	- uint8 (1 byte unsigned)
 	- int16 (2 bytes signed)
-	- uint16 (2 bytes unsigned)
 	- int32 (4 bytes signed)
-	- uint32 (4 bytes unsigned)
 	- int64 (8 bytes signed)
-	- uint64 (8 bytes unsigned)
+	and their unsigned equivalents (prefixed by u)
+	
+	(FLOATS)
 	- half (2 byte half-float IEEE 754)
 	- float (4 byte float IEEE 754)
 	- double (8 byte float IEEE 754)
