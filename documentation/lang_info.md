@@ -57,11 +57,13 @@ SPL features these basic types:
 	- int16 (2 bytes signed)
 	- int32 (4 bytes signed)
 	- int64 (8 bytes signed)
-	and their unsigned equivalents prefixed by u (uint8, uint16, uint32, uint64)
+	and their unsigned equivalents prefixed by `u` (uint8, uint16, uint32, uint64)
 	
 	(FLOATS)
 	- half (2 byte half-float IEEE 754)
 	- float (4 byte float IEEE 754)
 	- double (8 byte float IEEE 754)
 
-Prefixing a type by \[\] indicates an array while prefixing it with \* indicates a pointer.
+Prefixing a type by `[]` indicates an array while prefixing it with `&` indicates a pointer (i.e. a reference).
+
+Example: `x: []&uint8` is an array of uint8 pointers.
