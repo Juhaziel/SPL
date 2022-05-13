@@ -8,21 +8,21 @@ SPL is simply an amateur experiment with compilation and a tool made to test sim
 
 This Git repository contains documentation on SPL as well as a compiler toolchain with a Mercury Assembly backend
 
-## 2. Environment ##
+## 2. Language ##
 
-Just like C, there are multiple environments/scopes that all keep track of their own variables and procedures.
+### 2.1 Concepts ###
 
-A translation unit is a singular file after preprocessing.
-The topmost (program) environment is the program environment, which keeps track of all the variables across all translation units.
+#### 2.1.1 Namespaces ####
+A namespace is a set of unique identifiers.
+Just like C, there are 4 namespaces:
 
-Each translation unit has a global environment.
-By default, all global symbols will be present in the program environment unless specified as `private`.
-Procedure can only exist within the global environment of a translation unit.
+	- Labels (loop names)
+	- Tags (names of structures, enums and unions)
+	- Members of structs and unions (each struct/union has its own namespace)
+	- Everything else
 
-Each procedure possesses its own procedure environment.
+#### 2.1.2 Scopes ####
+A singular program can be divided into multiple scopes that each maintain their own set of identifiers.
 
-Finally, each compound statement possesses its own local environment.
 
-Lower scopes have access to the symbols of higher scopes they have been declared in.
-
-## 3. Language ##
+#### 2.1.3 Types ####
