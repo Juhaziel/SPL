@@ -37,7 +37,8 @@ The possible scope levels are:
 	- Block Scope (Inside procedures or blocks)
 	- Prototype Scope (Inside procedure declarations)
 
-Prototype scoped variables are only checked against input when the input is a constant, known value.
+Prototype scoped variables cannot be reused in other declarations, unlike C.
+This means expressions like `(n int16, arr [n]uint8)` are **not** allowed.
 
 In order for a file scoped variable to be visible to other files (program scoped), it must be prefixed by `global`.
 
@@ -73,6 +74,5 @@ More complex types can be created such as:
 	- An union type representing an overlap of multiple same-sized variables.
 	- A procedure type representing a block of instructions that can be called with varying parameters. 
 
-Prefixing a type by `[]` indicates an array while prefixing it with `&` indicates a pointer (i.e. a reference).
-
-Example: `x: []&uint8` is an array of uint8 pointers.
+In general, the sizes all basic types, structures, unions, pointers and arrays are known.
+The only exception is for arrays whose size depends on a variable, in which case
