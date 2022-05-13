@@ -57,7 +57,7 @@ SPL features these basic types:
 	- int16 (2 bytes signed)
 	- int32 (4 bytes signed)
 	- int64 (8 bytes signed)
-	and their unsigned equivalents (prefixed by u)
+	and their unsigned equivalents prefixed by u (uint8, uint16, uint32, uint64)
 	
 	(FLOATS)
 	- half (2 byte half-float IEEE 754)
