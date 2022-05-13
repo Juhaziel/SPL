@@ -66,6 +66,7 @@ SPL features these basic types:
 	- double (8 byte float IEEE 754)
 
 More complex types can be created such as:
+
 	- An *array* type representing a contiguous array of elements of the same type.
 	- A *pointer* type representing the address of another variable.
 	- A *structure* type representing a grouping of many values.
