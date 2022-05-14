@@ -116,7 +116,9 @@ A pre-processing token consists of:
 Any token that does not fall within the pre-processing tokens becomes an *other* token.
 
 2.2.1 Keywords:
-	
+
+|          |        |         |          |
+|----------|--------|---------|----------|	
 | break    | for    | static  | void     |
 | const    | global | struct  | volatile |
 | continue | if     | typedef |          |
