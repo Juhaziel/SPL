@@ -115,14 +115,116 @@ A pre-processing token consists of:
 
 Any token that does not fall within the pre-processing tokens becomes an *other* token.
 
-2.2.1 Keywords:
-
+#### 2.2.1 Keywords: ####
 |          |        |         |          |
 |----------|--------|---------|----------|	
 | break    | for    | static  | void     |
 | const    | global | struct  | volatile |
 | continue | if     | typedef |          |
-| else     | return |  union  |          |
+| else     | return | union   |          |
 | enum     | sizeof | var     |          |
 
 plus all the variable types
+
+#### 2.2.2 Identifier ####
+An identifier is a string of ASCII alphanumerical characters including the underscore.
+It **must not** begin with a number
+
+#### 2.2.3 Constants ####
+A constant can either be an integer, a floating point number, an enum identifier or a single ASCII character.
+
+##### 2.2.3.1 Integer constant #####
+Can be either:
+	
+	- A decimal number (starting with a non-zero digit)
+	- A binary number (starting with 0b)
+	- A hexadecimal number (starting with 0x)
+
+And can be preceded by a negative sign.
+
+##### 2.2.3.2 Floating point constant #####
+Can be either:
+	
+	- A regular decimal fraction (mandatory .)
+	- A hexadecimal fraction (starting with 0x, mandatory .)
+	- A binary fraction (starting with 0b, mandatory .)
+	- A scientific notation equivalent with the appropriate prefix, a mantissa (fractional or decimal), e or E and a signed exponent.
+
+##### 2.2.3.3 Enum constant #####
+This is simply an identifier. It will be verified by the parser and its semantic analyzer.
+
+##### 2.2.3.4 ASCII constant #####
+Enclosed within single quotes (').
+Can be either:
+	
+	- A single ASCII character that is not ', \ or a new line
+	- An escape sequence:
+		- \', \", \\\\, \a, \b, \f, \r, \n, \t, \v
+		- \xXX (where XX is an hexadecimal byte)
+
+#### 2.2.4 String literal ####
+Enclosed within double quotes (")
+Can be a sequence of:
+
+	- Single ASCII characters that is not ", \ or a new line
+	- An escape sequence like ASCII constants.
+
+Adjacent string literal tokens will be combined.
+
+#### 2.2.5 Punctuators ####
+Covers all punctuation useful to SPL in the ASCII set
+```
+[ ] ( ) { } . ->
+& * + - ~ !
+/ % << >> < > <= >= == != ^ | && ||
+@ ? : ;
+= *= /= %= += -= <<= >>= &= ^= |=
+, # ## 
+```
+
+#### 2.2.6 Preprocessor numbers ####
+Since the preprocessor does not care for number types, it uses simplified lexing rules.
+
+A number recursively is defined as an optional prefix (0x, 0b) followed by:
+	
+	- A sequence of digits (hexadecimal, decimal or binary)
+	- A number followed by a point
+	- A number followed by e or E and a sign (+ or -)
+
+### 2.3 Expressions ###
+Expressions are sequences of operands and operators that computes a value and/or designates an entity and/or generates side effects.
+
+Order of operation is not strictly verified through syntax and must instead be verified by an additional pass.
+
+#### 2.3.1 Primary expressions ####
+Can either be:
+
+	- identifier
+	- constant
+	- string literal
+	- ( expression )
+
+#### 2.3.2 Postfix expressions ####
+Can either be:
+
+	- primary-expression
+	- postfix-expression \[ expression \]
+	- postfix-expression ( argument-expression-list )
+	- postfix-expression . identifier
+	- postfix-expression \-\> identifier
+
+##### 2.3.2.1 Array indexing #####
+Given an array `arr`, the expression `arr[n]` indexes the nth index of arr.
+This is equivalent to the operation `*((arr)+(n * sizeof(arr[0])))`
+i.e. the index is multiplied by the size of the elements of *arr* and is then added to *arr*, which is the address of the first element of *arr*.
+
+This expression evaluates to the same type as the elements of the array.
+
+##### 2.3.2.2 Function calls #####
+A postfix expression that resolves to a function **or** a function pointer and that is followed by either
+empty parentheses or parentheses enclosing a comma-separated set of expressions will call the associated
+function with the contents of the parentheses.
+
+This expression evaluates to the return type of the function.
+If it is void, this expressions evaluates to nothing and cannot be used for further computation.
+
