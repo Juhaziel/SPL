@@ -37,7 +37,7 @@ The possible scope levels are:
 	- Block Scope (Inside procedures or blocks)
 	- Prototype Scope (Inside procedure declarations)
 
-In order for a file scoped variable to be visible to other files (program scoped), its indicator must be prefixed by `g` such as `gvar` or `gfunc`).
+In order for a file scoped variable to be visible to other files (program scoped), its indicator must be set to `global`).
 
 The value of any program or file scoped variable must not be the return value of a procedure.
 In other words, it must either be uninitialized or set to a literal value
@@ -48,7 +48,7 @@ Otherwise, prototype-scoped variables only last until the end of the procedure's
 Program and file scoped variables are stored in the data segment and last the entire program's runtime.
 
 Block scoped variables are stored in the stack of its corresponding procedure.
-Alternatively, a block scoped variable may be declared in the data segment by prefixing its indicator with `s` such as `svar`
+Alternatively, a block scoped variable may be declared in the data segment by setting its indicator to `static`
 
 #### 2.1.3 Types ####
 SPL features these basic types:
@@ -95,17 +95,7 @@ A variable can be qualified by two keywords:
 	- volatile, indicates a variable may be changed by an external program.
 	- const, indicates the current program must not change this variable.
 
-### 2.2 Lexical Elements
-A pre-processing token consists of:
-
-	- header-name
-	- identifier
-	- number
-	- char
-	- string
-	- punctuator
-	- other
-	
+### 2.2 Lexical Elements ###
 A token consists of:
 
 	- keyword
@@ -113,3 +103,24 @@ A token consists of:
 	- constant
 	- string
 	- punctuator
+
+A pre-processing token consists of:
+
+	- identifier
+	- number
+	- char
+	- string
+	- punctuator
+	- other
+
+Any token that does not fall within the pre-processing tokens becomes an *other* token.
+
+2.2.1 Keywords:
+	
+| break    | for    | static  | void     |
+| const    | global | struct  | volatile |
+| continue | if     | typedef |          |
+| else     | return |  union  |          |
+| enum     | sizeof | var     |          |
+
+plus all the variable types
