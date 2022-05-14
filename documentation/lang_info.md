@@ -96,3 +96,20 @@ A variable can be qualified by two keywords:
 	- const, indicates the current program must not change this variable.
 
 ### 2.2 Lexical Elements
+A pre-processing token consists of:
+
+	*header-name*
+	*identifier*
+	*number*
+	*char*
+	*string*
+	*punctuator*
+	*other*
+	
+A token consists of:
+
+	*keyword*
+	*identifier*
+	*constant*
+	*string*
+	*punctuator*
