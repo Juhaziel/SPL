@@ -37,7 +37,7 @@ The possible scope levels are:
 	- Block Scope (Inside procedures or blocks)
 	- Prototype Scope (Inside procedure declarations)
 
-In order for a file scoped variable to be visible to other files (program scoped), it must be prefixed by `global`.
+In order for a file scoped variable to be visible to other files (program scoped), its indicator must be prefixed by `g` such as `gvar` or `gfunc`).
 
 The value of any program or file scoped variable must not be the return value of a procedure.
 In other words, it must either be uninitialized or set to a literal value
@@ -48,7 +48,7 @@ Otherwise, prototype-scoped variables only last until the end of the procedure's
 Program and file scoped variables are stored in the data segment and last the entire program's runtime.
 
 Block scoped variables are stored in the stack of its corresponding procedure.
-Alternatively, a block scoped variable may be declared in the data segment by prefixing it with `static`
+Alternatively, a block scoped variable may be declared in the data segment by prefixing its indicator with `s` such as `svar`
 
 #### 2.1.3 Types ####
 SPL features these basic types:
@@ -71,7 +71,7 @@ More complex types can be created such as:
 	- An array type representing a contiguous array of elements of the same type.
 	- A pointer type representing the address of another variable.
 	- A structure type representing a grouping of many values.
-	- An union type representing an overlap of multiple same-sized variables.
+	- An union type representing an overlap of multiple variables.
 	- A procedure type representing a block of instructions that can be called with varying parameters and returns a value (or void if none). 
 
 In general, the sizes all basic types, structures, unions, pointers and arrays are known.
@@ -94,3 +94,5 @@ A variable can be qualified by two keywords:
 
 	- volatile, indicates a variable may be changed by an external program.
 	- const, indicates the current program must not change this variable.
+
+### 2.2 Lexical Elements
