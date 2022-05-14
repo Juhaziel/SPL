@@ -37,10 +37,10 @@ The possible scope levels are:
 	- Block Scope (Inside procedures or blocks)
 	- Prototype Scope (Inside procedure declarations)
 
-Prototype scoped variables cannot be reused in other declarations, unlike C.
-This means expressions like `(n int16, arr [n]uint8)` are **not** allowed.
-
 In order for a file scoped variable to be visible to other files (program scoped), it must be prefixed by `global`.
+
+The value of any program or file scoped variable must not be the return value of a procedure.
+In other words, it must either be uninitialized or set to a literal value
 
 During a procedure's definition, its parameters are set to block scope. Otherwise, the parameters are prototype scoped
 Otherwise, prototype-scoped variables only last until the end of the procedure's declaration.
@@ -54,7 +54,7 @@ Alternatively, a block scoped variable may be declared in the data segment by pr
 SPL features these basic types:
 	
 	(INTEGERS)
-	- word (macro-defined WORD_TYPE_SIZE, should represent 1 word)
+	- int (macro-defined INT_TYPE_SIZE, should represent 1 word)
 	- int8 (1 byte signed)
 	- int16 (2 bytes signed)
 	- int32 (4 bytes signed)
@@ -72,7 +72,25 @@ More complex types can be created such as:
 	- A pointer type representing the address of another variable.
 	- A structure type representing a grouping of many values.
 	- An union type representing an overlap of multiple same-sized variables.
-	- A procedure type representing a block of instructions that can be called with varying parameters. 
+	- A procedure type representing a block of instructions that can be called with varying parameters and returns a value (or void if none). 
 
 In general, the sizes all basic types, structures, unions, pointers and arrays are known.
-The only exception is for arrays whose size depends on a variable, in which case
+Unlike C, variable length arrays are strictly forbidden and must be dynamically allocated.
+This means an expression such as `arr [n]uint16` where n is an unknown variable is not allowed.
+However, that expression will work if n has a value known at compile time.
+
+Procedures are special in that they are not first-class members.
+As such, they cannot be returned from functions nor passed to them.
+Instead, function pointers **must** be used to pass a function by reference.
+
+##### 2.1.3.1 Type Storage Specifiers #####
+SPL possesses two storage specifying keywords:
+	
+	- global, indicates a file scoped variables must be elevated to program scope.
+	- static, indicates a block scoped variable must be stored statically in the data segment.
+
+##### 2.1.3.2 Type Qualifiers #####
+A variable can be qualified by two keywords:
+
+	- volatile, indicates a variable may be changed by an external program.
+	- const, indicates the current program must not change this variable.
