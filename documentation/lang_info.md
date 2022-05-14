@@ -98,18 +98,18 @@ A variable can be qualified by two keywords:
 ### 2.2 Lexical Elements
 A pre-processing token consists of:
 
-	*header-name*
-	*identifier*
-	*number*
-	*char*
-	*string*
-	*punctuator*
-	*other*
+	- header-name
+	- identifier
+	- number
+	- char
+	- string
+	- punctuator
+	- other
 	
 A token consists of:
 
-	*keyword*
-	*identifier*
-	*constant*
-	*string*
-	*punctuator*
+	- keyword
+	- identifier
+	- constant
+	- string
+	- punctuator
