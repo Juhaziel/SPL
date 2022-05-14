@@ -74,14 +74,25 @@ More complex types can be created such as:
 	- An union type representing an overlap of multiple variables.
 	- A procedure type representing a block of instructions that can be called with varying parameters and returns a value (or void if none). 
 
-In general, the sizes all basic types, structures, unions, pointers and arrays are known.
+The sizes all basic types and pointers are known.
+Arrays, structures and unions can be incomplete if:
+
+	- A structure or union was declared but not defined.
+	- An array was declared without a size and was not defined.
+
+An array definition does not need to specify its size in the declaration as it can be inferred
+from the size of the right side of the equal sign.
+
 Unlike C, variable length arrays are strictly forbidden and must be dynamically allocated.
 This means an expression such as `arr [n]uint16` where n is an unknown variable is not allowed.
 However, that expression will work if n has a value known at compile time.
 
+A pointer can point to *void* and still be valid as it is internally a singular number.
+Such pointers can be implicitly casted to any and all other type of pointer.
+
 Procedures are special in that they are not first-class members.
-As such, they cannot be returned from functions nor passed to them.
-Instead, function pointers **must** be used to pass a function by reference.
+As such, they cannot be returned from procedures nor passed to them.
+Instead, procedure pointers **must** be used to pass a procedure by reference.
 
 ##### 2.1.3.1 Type Storage Specifiers #####
 SPL possesses two storage specifying keywords:
@@ -194,24 +205,25 @@ A number recursively is defined as an optional prefix (0x, 0b) followed by:
 ### 2.3 Expressions ###
 Expressions are sequences of operands and operators that computes a value and/or designates an entity and/or generates side effects.
 
-Order of operation is not strictly verified through syntax and must instead be verified by an additional pass.
+Precedence of operators is verified through syntax but associativity is not.
+As such, left-associative expressions must be corrected by the parser.
 
 #### 2.3.1 Primary expressions ####
 Can either be:
 
 	- identifier
 	- constant
-	- string literal
+	- string-literal
 	- ( expression )
 
 #### 2.3.2 Postfix expressions ####
 Can either be:
 
 	- primary-expression
-	- postfix-expression \[ expression \]
+	- postfix-expression [ expression ]
 	- postfix-expression ( argument-expression-list )
 	- postfix-expression . identifier
-	- postfix-expression \-\> identifier
+	- postfix-expression -> identifier
 
 ##### 2.3.2.1 Array indexing #####
 Given an array `arr`, the expression `arr[n]` indexes the nth index of arr.
@@ -220,11 +232,49 @@ i.e. the index is multiplied by the size of the elements of *arr* and is then ad
 
 This expression evaluates to the same type as the elements of the array.
 
-##### 2.3.2.2 Function calls #####
-A postfix expression that resolves to a function **or** a function pointer and that is followed by either
+##### 2.3.2.2 Procedure calls #####
+A postfix expression that resolves to a procedure **or** a procedure pointer and that is followed by either
 empty parentheses or parentheses enclosing a comma-separated set of expressions will call the associated
-function with the contents of the parentheses.
+procedure with the contents of the parentheses.
 
-This expression evaluates to the return type of the function.
-If it is void, this expressions evaluates to nothing and cannot be used for further computation.
+This expression evaluates to the return type of the procedure.
+If it is void, any attempt to modify or access the return value is undefined behaviour.
 
+##### 2.3.2.3 Structure and union members #####
+The first operand of . must be a *struct* or *union*
+The first operand of -> must be a pointer to a *struct* or *union*
+
+In both cases, the second operand must be a member of the corresponding *struct* or *union*
+
+#### 2.3.3 Unary operators ####
+Can either be:
+	
+	- postfix-expression
+	- unary-operator cast-expression
+	- sizeof unary-expression
+	- sizeof ( var-type )
+
+##### 2.3.3.1 Unary operators #####
+Can either be:
+	
+	- & (address-of operator, returns a pointer)
+	- \* (dereference operator, returns an element of the pointer's type)
+	- + (unary plus, number only)
+	- - (unary minus, number only)
+	- ~ (bitwise not, integer only)
+	- ! (logical not, number only)
+
+##### 2.3.3.2 The sizeof operator #####
+sizeof cannot be applied to incomplete types (undefined arrays, structures, unions)
+nor can it be applied to procedures.
+
+sizeof returns the size in bytes of an expression or a variable type.
+
+##### 2.3.3.3 Cast operator #####
+Can be either:
+
+	- unary-expression
+	- ( var-type ) cast-expression
+
+The cast expression must be basic or pointer based
+The expression is converted to the type in between the parentheses.
