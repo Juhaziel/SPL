@@ -258,7 +258,7 @@ Can either be:
 Can either be:
 	
 	- & (address-of operator, returns a pointer)
-	- \* (dereference operator, returns an element of the pointer's type)
+	- * (dereference operator, returns an element of the pointer's type)
 	- + (unary plus, number only)
 	- - (unary minus, number only)
 	- ~ (bitwise not, integer only)
