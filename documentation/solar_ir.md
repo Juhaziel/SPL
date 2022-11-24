@@ -597,7 +597,7 @@ Operators always take two expressions and executes an operation on both. If both
 
 Operator precedence:
 1. \* / /$ %
-2. + -      
+2. \+ \-      
 3. << >> >>$
 4. & ~&     
 5. ^ ~^     
