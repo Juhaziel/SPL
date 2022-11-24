@@ -34,7 +34,7 @@ Data
 Datum
 	datum
 		: NAME ':'
-		| TYPE ('[' sconst? ']')? ('{' exprlist? '}')? ';'
+		| TYPE ('[' expr? ']')? ('{' exprlist? '}')? ';'
 		| 'word1' '[' ']' STRING ';'
 		| ALIGNN ';'
 		;
@@ -309,7 +309,7 @@ data {
 
 ### 3.2 Initialisation ###
 
-To allocate memory for a datum, the type, amount of elements must be specified. The amount of elements must be greater than 0 and must be enclosed within brackets (`[]`).
+To allocate memory for a datum, the type, amount of elements must be specified. The amount of elements must be greater than 0 and must be enclosed within brackets (`[]`). The amount of elements must be a constant expression.
 
 Additionally, a comma-separated list of constant expressions enclosed within braces (`{}`) called `{constant-list}` can be provided for initialisation values.
 
