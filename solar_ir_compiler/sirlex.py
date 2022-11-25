@@ -28,8 +28,8 @@ class Token:
     
     def __str__(self):        
         if len(self.extra) > 0:
-            return f"Token({self.type}, {self.value}, {self.extra})"
-        return f"Token({self.type}, {self.value})"
+            return f"Token({self.type}, {repr(self.value)}, {self.extra})"
+        return f"Token({self.type}, {repr(self.value)})"
     
     def __repr__(self):
         return self.__str__()
