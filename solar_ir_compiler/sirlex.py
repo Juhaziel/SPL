@@ -37,23 +37,23 @@ class Token:
 # Class representing an active Lexer.
 # Expects source code to be passed to its constructor
 class Lexer:
-    PUNCTUATOR_CHARS = "(){}[];:,=!<>+-*/%&!^~!#?"
+    PUNCTUATOR_CHARS = "(){}[];:,=!<>+-*/%&!^~!#?$"
     BASE_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     KEYWORDS = [
-        ("align1", Token.T_ALIGN), ("align2", Token.T_ALIGN), ("align4", Token.T_ALIGN),   ("align8", Token.T_ALIGN), 
-        ("data", Token.T_KEYWORD), ("else", Token.T_KEYWORD), ("export", Token.T_KEYWORD), ("foreign", Token.T_KEYWORD),
-        ("goto", Token.T_KEYWORD), ("if", Token.T_KEYWORD),   ("import", Token.T_KEYWORD), ("jump", Token.T_KEYWORD),
-        ("pass", Token.T_KEYWORD), ("ptr", Token.T_TYPE),     ("return", Token.T_KEYWORD), ("weak", Token.T_KEYWORD), 
-        ("word1", Token.T_TYPE),   ("word2", Token.T_TYPE),   ("word4", Token.T_TYPE),     ("word8", Token.T_TYPE)
+        ("align1", Token.T_ALIGN),  ("align2", Token.T_ALIGN), ("align4", Token.T_ALIGN),   ("align8", Token.T_ALIGN),   ("alignp", Token.T_ALIGN)
+        ("const", Token.T_KEYWORD), ("data", Token.T_KEYWORD), ("else", Token.T_KEYWORD),   ("export", Token.T_KEYWORD), ("foreign", Token.T_KEYWORD),
+        ("goto", Token.T_KEYWORD),  ("if", Token.T_KEYWORD),   ("import", Token.T_KEYWORD), ("jump", Token.T_KEYWORD),
+        ("pass", Token.T_KEYWORD),  ("ptr", Token.T_TYPE),     ("return", Token.T_KEYWORD), ("weak", Token.T_KEYWORD), 
+        ("word1", Token.T_TYPE),    ("word2", Token.T_TYPE),   ("word4", Token.T_TYPE),     ("word8", Token.T_TYPE)
     ]
     PUNCTUATORS = [
-        ("+", Token.T_OP), ("-", Token.T_OP), ("*", Token.T_OP), ("**", Token.T_OP), ("/", Token.T_OP), ("%", Token.T_OP), # Add, Sub, Mul, High Mul, Div, Mod
+        ("+", Token.T_OP), ("-", Token.T_OP), ("*", Token.T_OP), ("/", Token.T_OP), ("/$", Token.T_OP), ("%", Token.T_OP), ("%$", Token.T_OP), # Add, Sub, Mul, Div, Signed Div, Mod, Signed Mod
         ("&", Token.T_OP), ("|", Token.T_OP), ("^", Token.T_OP), ("~&", Token.T_OP), ("~|", Token.T_OP), ("~^", Token.T_OP), # AND, OR, XOR, NAND' NOR, XNOR
-        ("<<", Token.T_OP), (">>", Token.T_OP), (">>*", Token.T_OP), # Left Shift, Right Shift Logical, Right Shift Arith
+        ("<<", Token.T_OP), (">>", Token.T_OP), (">>$", Token.T_OP), # Left Shift, Right Shift Logical, Right Shift Arith
         
         ("==", Token.T_RELOP), ("!=", Token.T_RELOP), # Equal, Not Equal
         (">", Token.T_RELOP), ("<", Token.T_RELOP), (">=", Token.T_RELOP), ("<=", Token.T_RELOP), # Bigger, Smaller, Bigger or Equal, Smaller or Equal (Unsigned)
-        (">*", Token.T_RELOP), ("<*", Token.T_RELOP), (">=*", Token.T_RELOP), ("<=*", Token.T_RELOP), # Bigger, Smaller, Bigger or Equal, Smaller or Equal (Signed)
+        (">$", Token.T_RELOP), ("<$", Token.T_RELOP), (">=$", Token.T_RELOP), ("<=$", Token.T_RELOP), # Bigger, Smaller, Bigger or Equal, Smaller or Equal (Signed)
         
         ("(", Token.T_LPAR), (")", Token.T_RPAR),
         ("{", Token.T_LBRACE), ("}", Token.T_RBRACE), 
