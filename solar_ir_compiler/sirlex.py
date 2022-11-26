@@ -19,12 +19,15 @@ class Token:
     T_SEMICOLON = "SEMICOLON" # ;
     T_COLON = "COLON" # :
     T_COMMA = "COMMA" # ,
+    T_ASSIGN = "ASSIGN" # =
     T_EOF = "EOF"
     
-    def __init__(self, type, value, **kwargs):
+    def __init__(self, type, value, linenum=-1, linepos=-1, **kwargs):
         self.type = type
         self.value = value
         self.extra = kwargs
+        self.linenum = linenum
+        self.linepos = linepos
     
     def __str__(self):        
         if len(self.extra) > 0:
@@ -58,7 +61,8 @@ class Lexer:
         ("(", Token.T_LPAR), (")", Token.T_RPAR),
         ("{", Token.T_LBRACE), ("}", Token.T_RBRACE), 
         ("[", Token.T_LBRACKET), ("]", Token.T_RBRACKET),
-        (";", Token.T_SEMICOLON), (":", Token.T_COLON), (",", Token.T_COMMA)
+        (";", Token.T_SEMICOLON), (":", Token.T_COLON), (",", Token.T_COMMA),
+        ("=", Token.T_ASSIGN)
     ]
     TYPE_SIZE_SUFFIX = {
         "default": "word1",
@@ -71,6 +75,8 @@ class Lexer:
         self.text = text
         self.pos = 0
         self.current_char = self.text[self.pos]
+        self.linenum = 1
+        self.linepos = 1
 
     def __error(self, text):
         raise Exception(f"[LEXER]: An error occured while reading tokens.\n{text}")
@@ -78,6 +84,7 @@ class Lexer:
     # Advance the current character by one and update current_chair, pos
     def __advance(self, num=1):
         self.pos += num
+        self.linepos += num
         if self.pos >= len(self.text):
             self.current_char = None # End of File
         else:
@@ -90,16 +97,21 @@ class Lexer:
     # Skip consecutive whitespace characters
     def __skip_whitespace(self):
         while self.current_char is not None and self.current_char.isspace():
+            if self.current_char == "\n":
+                self.linenum += 1
+                self.linepos = 0
             self.__advance()
     
     # Extract a Name or Keyword from text
     def __read_name(self):
         name = ""
         if not self.current_char:
-            self.__error("{self.current_pos}: Expected name, got EOF")
+            self.__error(f"{self.linenum},{self.linepos}: Expected name, got EOF")
         
         if not ((self.current_char.isalpha() and self.current_char.isascii()) or self.current_char in "_.@"):
-            self.__error(f"{self.current_pos}: Invalid name starting character '{self.current_char}'")
+            self.__error(f"{self.linenum},{self.linepos}: Invalid name starting character '{self.current_char}'")
+        
+        start = (self.linenum, self.linepos)
         
         while self.current_char.isalnum() or self.current_char in "_.@":
             name += self.current_char
@@ -118,12 +130,12 @@ class Lexer:
         if not equals_keyword and name.startswith("@"):
             name = name[1:]
             
-        return Token(equals_keyword if equals_keyword else Token.T_NAME, name)
+        return Token(equals_keyword if equals_keyword else Token.T_NAME, name, start[0], start[1])
         
     # Extract an integer in a specified base
     def __read_integer(self, base):
         if not (2 <= base <= len(Lexer.BASE_CHARS)):
-            self.__error(f"{self.pos}: Invalid integer base '{base}'")
+            self.__error(f"{self.linenum},{self.linepos}: Invalid integer base '{base}'")
             
         chars = Lexer.BASE_CHARS[0:base]
         
@@ -134,11 +146,10 @@ class Lexer:
             self.__advance()
         
         if self.current_char and self.current_char.isalpha():
-            self.__error(f"{self.pos}: Integer '{num_string}' cannot be followed by alphabetic '{self.current_char}'.")
+            self.__error(f"{self.linenum},{self.linepos}: Integer '{num_string}' cannot be followed by alphabetic '{self.current_char}'.")
         
         return int(num_string, base=base)
         
-    
     # Read a single character or escape sequence
     def __read_char(self):
         char = self.current_char
@@ -181,7 +192,7 @@ class Lexer:
         while self.current_char != "\"":
             string.extend(bytes(chr(self.__read_char()), encoding = "utf-8"))
             if self.current_char == None:
-                self.__error(f"{self.pos-1}: Expected closing double quote while parsing string, got '{self.current_char or 'EOF'}'.")
+                self.__error(f"{self.linenum},{self.linepos-1}: Expected closing double quote while parsing string, got '{self.current_char or 'EOF'}'.")
             
         return string
     
@@ -193,25 +204,27 @@ class Lexer:
                 punct_matches.append(punct)
         
         if len(punct_matches) == 0:
-            self.__error(f"{self.pos}: Invalid punctuator '{self.__peek(10)}{'{...}' if self.pos+10 < len(self.text) else '{EOF}'}'.")
+            self.__error(f"{self.linenum},{self.linepos}: Invalid punctuator '{self.__peek(10)}{'{...}' if self.pos+10 < len(self.text) else '{EOF}'}'.")
         
         list.sort(punct_matches, key = lambda punct: len(punct[0]), reverse = True)
         punct = punct_matches[0]
         
+        start = (self.linenum, self.linepos)
+        
         [self.__advance() for _ in range(len(punct[0]))]
         
-        return Token(punct[1], punct[0].strip())
+        return Token(punct[1], punct[0].strip(), start[0], start[1])
     
     def __get_next_token(self):
         while self.current_char is not None:
             
             # Ignore any comments
             if self.__peek(2) == "/*":
-                comment_start = self.pos
+                comment_start = (self.linenum, self.linepos)
                 while self.__peek(2) != "*/":
                     self.__advance()
                     if self.current_char == None:
-                        self.__error(f"{comment_start}: Comment unclosed at end of file at position.")
+                        self.__error(f"{comment_start[0]},{comment_start[1]}: Comment unclosed at end of file")
                 del comment_start
             
             # Ignore any whitespace that isn't part of another structure
@@ -221,6 +234,8 @@ class Lexer:
             
             # Try parsing an integer if a digit is detected
             elif self.current_char.isdigit():
+                start = (self.linenum, self.linepos)
+                
                 base = 10
                 if self.current_char == '0':
                     self.__advance()
@@ -231,30 +246,32 @@ class Lexer:
                     elif self.current_char == "x":
                         base = 16
                     else:
-                        self.__error(f"{self.pos-1}: Invalid base prefix '0{self.current_char}'")
+                        self.__error(f"{self.linenum},{self.linepos-1}: Invalid base prefix '0{self.current_char}'")
                     self.__advance()
                 
                 num = self.__read_integer(base)
                 
-                return Token(Token.T_INT, num, wasChar = False)
+                return Token(Token.T_INT, num, start[0], start[1], wasChar = False)
             
             # Try parsing a character
             elif (self.current_char == "'"):
+                start = (self.linenum, self.linepos)
                 self.__advance()
                 char_int = self.__read_char()
                 
                 # Check that it is closed by a single quote
                 if self.current_char != "'":
-                    self.__error(f"{self.pos-1}: Expected closing single quote while parsing character, got '{self.current_char or 'EOF'}'.")
+                    self.__error(f"{self.linenum},{self.linepos-1}: Expected closing single quote while parsing character, got '{self.current_char or 'EOF'}'.")
                 self.__advance()
-                return Token(Token.T_CHAR, char_int, wasChar = True)
+                return Token(Token.T_CHAR, char_int, start[0], start[1], wasChar = True)
             
             # Try parsing a string
             elif (self.current_char == '"'):
+                start = (self.linenum, self.linepos)
                 self.__advance()
                 utf8string = self.__read_string()
                 self.__advance()
-                return Token(Token.T_STR, utf8string)
+                return Token(Token.T_STR, utf8string, start[0], start[1])
             
             # Try parsing a name if a letter, _, ., or @ is encountered.
             elif (self.current_char.isalpha() and self.current_char.isascii()) or self.current_char in "_.@":
@@ -266,11 +283,11 @@ class Lexer:
             
             # Otherwise, no valid token was found
             else:
-                self.__error(f"{self.pos}: Unknown token start symbol '{self.current_char}'") 
+                self.__error(f"{self.linenum},{self.linepos}: Unknown token start symbol '{self.current_char}'") 
             
             self.__advance()
         
-        return Token(Token.T_EOF, None)
+        return Token(Token.T_EOF, None, self.linenum, self.linepos)
     
     def lex(self):
         tokens = []
