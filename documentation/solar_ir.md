@@ -69,7 +69,6 @@ Statements
 		| NAME '=' expr ';'
 		| TYPE '[' expr ']' '=' expr ';'
 		| 'if' '(' expr rel expr ')' block ('else' block)?
-		| block
 		| NAME ':'
 		| 'goto' NAME ';'
 		| conv? 'jump' expr '(' exprlist? ')' ';'
