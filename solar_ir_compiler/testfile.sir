@@ -1,0 +1,32 @@
+import printf;
+export main, fib;
+
+data {
+    align8;
+    test: word2{2};
+	str: word1[]"Fibonacci n25: %i";
+}
+
+const max_fib = 50;
+
+foreign C (word1) fib(word1 num)
+data { memo: word1[max_fib-1]{0}; }
+{
+    if (num <= 1) {
+        return 1;
+    }
+
+    if (word1[memo+num]) {
+        return word1[memo+num-2];
+    } else {
+        foreign C (word1) a = fib(num-1);
+        foreign C (word1) b = fib(num-2);
+        word1[memo+num-2] = a + b;
+        return a + b;
+    }
+}
+
+foreign C (word1) main() {
+    foreign C (word1) n25 = fib(25);
+    foreign C (word1) printf(str, n25);
+} 

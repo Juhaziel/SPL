@@ -28,7 +28,7 @@ PAD
 
 Data
 	data
-		: 'data' '{' datum* '}' ';'
+		: 'data' '{' datum* '}'
 		;
 
 Datum
@@ -39,15 +39,9 @@ Datum
 		| ALIGNN ';'
 		;
 		
-Simple Constants
-	sconst
-		: INT
-		| CHAR
-		;
-		
 Constants
 	const
-		: sconst
+		: INT | CHAR
 		| NAME
 		| STRING
 		;
@@ -248,6 +242,8 @@ Local labels can be declared within a function body similarly to data labels. Ho
 
 Names exist in two scopes: global and local. Global names refer to datum and functions, and their value is the memory address. Local names can refer to registers or local labels, the first of which takes priority over global names.
 
+Only registers can have their value overwritten.
+
 Local labels exist within their own namespace and as such are independent from register or global .
 
 #### 2.3.13 Calling Conventions ####
@@ -289,7 +285,7 @@ data {
 
 ### 3.1 Labels ###
 
-A label can be considered as a pointer to a memory address and are of type `ptr`. Once declared, they become names that can be used in expressions. Labels can be used before they are declared.
+A label can be considered as a pointer to a memory address and are of type `ptr`. Once declared, they become names that can be used in expressions. Labels can be used before they are declared. They cannot be modified but are not considered constant expressions.
 
 A label points to the first word of the first datum declared after itself.
 

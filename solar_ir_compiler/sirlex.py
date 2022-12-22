@@ -20,6 +20,7 @@ class Token:
     T_COLON = "COLON" # :
     T_COMMA = "COMMA" # ,
     T_ASSIGN = "ASSIGN" # =
+    T_SIGNED = "T_SIGN" # $
     T_EOF = "EOF"
     
     def __init__(self, type, value, linenum=-1, linepos=-1, **kwargs):
@@ -29,10 +30,15 @@ class Token:
         self.linenum = linenum
         self.linepos = linepos
     
-    def __str__(self):        
+    def __str__(self):
+        value = self.value
+        if self.type == Token.T_STR:
+            value = bytes(value).decode('utf8')
+        if self.type == Token.T_CHAR and self.extra.get("wasChar"):
+            value = chr(value)
         if len(self.extra) > 0:
-            return f"Token({self.type}, {repr(self.value)}, {self.extra})"
-        return f"Token({self.type}, {repr(self.value)})"
+            return f"Token({self.type}, {repr(value)}, {self.extra})"
+        return f"Token({self.type}, {repr(value)})"
     
     def __repr__(self):
         return self.__str__()
@@ -62,7 +68,8 @@ class Lexer:
         ("{", Token.T_LBRACE), ("}", Token.T_RBRACE), 
         ("[", Token.T_LBRACKET), ("]", Token.T_RBRACKET),
         (";", Token.T_SEMICOLON), (":", Token.T_COLON), (",", Token.T_COMMA),
-        ("=", Token.T_ASSIGN)
+        ("=", Token.T_ASSIGN),
+        ("$", Token.T_SIGNED)
     ]
     TYPE_SIZE_SUFFIX = {
         "default": "word1",
@@ -141,7 +148,7 @@ class Lexer:
         
         num_string = ""
         
-        while self.current_char and self.current_char in chars:
+        while self.current_char and self.current_char.upper() in chars:
             num_string += self.current_char
             self.__advance()
         
@@ -238,16 +245,17 @@ class Lexer:
                 
                 base = 10
                 if self.current_char == '0':
-                    self.__advance()
-                    if self.current_char == "b":
-                        base = 2
-                    elif self.current_char == "o":
-                        base = 8
-                    elif self.current_char == "x":
-                        base = 16
-                    else:
-                        self.__error(f"{self.linenum},{self.linepos-1}: Invalid base prefix '0{self.current_char}'")
-                    self.__advance()
+                    if self.text[self.pos] and self.text[self.pos].isalpha():
+                        self.__advance()
+                        if self.current_char == "b":
+                            base = 2
+                        elif self.current_char == "o":
+                            base = 8
+                        elif self.current_char == "x":
+                            base = 16
+                        else:
+                            self.__error(f"{self.linenum},{self.linepos-1}: Invalid base prefix '0{self.current_char}'")
+                        self.__advance()
                 
                 num = self.__read_integer(base)
                 
